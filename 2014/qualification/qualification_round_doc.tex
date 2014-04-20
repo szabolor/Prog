@@ -1,0 +1,163 @@
+%% LyX 2.0.7.1 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
+\documentclass[american]{article}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=1.5cm,bmargin=1.5cm,lmargin=2cm,rmargin=2cm}
+\usepackage{babel}
+\usepackage{amstext}
+\usepackage{amssymb}
+\usepackage[unicode=true,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=false,
+ breaklinks=false,pdfborder={0 0 0},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfauthor={Szabó Lóránt}}
+
+\makeatletter
+\@ifundefined{date}{}{\date{}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usepackage{indentfirst}
+
+\makeatother
+
+\begin{document}
+
+\title{Google Code Jam 2014}
+
+
+\author{-- Qualification Round --}
+
+\maketitle
+
+\section{Cookie Clicker}
+
+Translating the problem into mathematical language we have to minimize
+the following formula with respect to $k\in\mathbb{N}$:
+\[
+t(k)=C\sum_{i=0}^{k-1}\frac{1}{2+i\, F}+\frac{X}{2+k\, F}
+\]
+Note the difference of two consecutive element:
+\[
+\Delta t(k)=t(k+1)-t(k)=C\left(\sum_{i=0}^{k}\frac{1}{2+i\, F}-\sum_{i=0}^{k-1}\frac{1}{2+i\, F}\right)+X\left(\frac{1}{2+(k+1)\, F}-\frac{1}{2+k\, F}\right)
+\]
+\[
+\Delta t(k)=\frac{C}{2+k\, F}+\frac{X}{2+(k+1)\, F}-\frac{X}{2+k\, F}
+\]
+Conjecture: $t(k)$ sequence is a strictly monotonic decreasing sequence
+for some finite integer $K_{1}\geq0$ and then it's a strictly monotonic
+increasing sequence which limit goes to infinity for $k>K_{2}$, so
+for at least one $K$ integer $t(k)$ is minimal.
+
+Thus $\Delta t(k<K_{1})<0$ and $\Delta t(k>K_{2})>0$, so we want
+to solve $\Delta t(k)=0$
+\[
+k=\frac{x}{c}-\frac{2}{f}
+\]
+But this expression does not guarantee that $k$ is integer, so let's
+take $k=\lfloor\frac{x}{c}-\frac{2}{f}\rfloor$ %
+\footnote{I'm not sure why not rounding, but this do the job (anyway integer
+solution should be somewhere around the fraction value)%
+}. With a given $k$ we can substitute to the first formula to get
+the result.
+
+
+\section{Deceitful War}
+
+The problem mention that Ken follows an \emph{optimal strategy}. In
+this game the optimal strategy is to maximize the won point number.
+It is easy to show that trying to ''beat'' every Naomi's weight
+with the possible lightest weight and if he can't beat it, letting
+it go with his lightest weight can maximize his point -- if they both
+play War.
+
+
+\subsection{War}
+
+According to the previous strategy anything what Naomi call will be
+tried to be beaten. Let's investigate what happens if Naomi calls
+in ascending order her weights:
+
+When Ken have to use his heaviest weight he won't be able to defeat
+more weights, so the remaining number of weights would score for Naomi.
+In other order of calls Ken would use the same (if the lightest still
+available) or heavier (if he used already the lightest) weights when
+beating Naomi's given weight. Reordering Naomi calls doesn't change
+(is used the lightest) the final score or decrease it (when not the
+lightest was used), but it will no way increase her score.
+
+The steps of a very basic algorithm determining the final score in
+War. Basically it's call Naomi's weights in ascending order and check
+if Ken can beat it. The ones, which was used in a round become marked.
+\begin{enumerate}
+\item Sort both of the weight sequences and set unmarked all of the weights
+\item $i\leftarrow1$; $score\leftarrow\textrm{length of the sequence}$
+\item Select Naomi's $i$th weight
+\item $j\leftarrow1$
+\item Is Ken's $j$th weight is not marked and heavier than Naomi's $i$th
+weight?
+
+\begin{enumerate}
+\item Yes: mark Ken's $j$th weight and $score\leftarrow score-1$ and if
+$i\leq n$ go back to 3.
+\item No: $j\leftarrow j+1$ and if $j\leq n$ go back to 5.
+\end{enumerate}
+\end{enumerate}
+
+\subsection{Deceitful War}
+
+Naomi knowing Ken's strategy, that he tries to beat every beatable
+weight with the possible lightest weight of his, can easily kick out
+Ken's heaviest weights with her lighter weight. Let's propose Ken
+has $K_{h}$ and Naomi has $N_{l}<K_{h}$ weight. Naomi can lie that
+her $N_{l}$ weight is $K_{h}-\Delta$ %
+\footnote{Because of the discrete nature of the problem there will be always
+infinitely many $\Delta$ for which $K_{h}-\Delta$ only beatable
+with $K_{h}$%
+}. So Ken would use his $K_{h}$ weight to beat Naomi's $N_{l}$. When
+Naomi wants to score with $N_{h}$ she must lie her weight to be the
+heaviest in the game (e.g. $\textrm{heaviest}+\Delta$), so Ken would
+call his lightest one $K_{l}$. It's optimal for Naomi when she use
+his lightest weight to beat Ken's heaviest weight which doesn't exceed
+her weight. 
+
+Let's investigate what if Naomi call weights in ascending order. She
+must consider in every round that is there any weight which can be
+beaten with her currently selected weight. If there's one lie it as
+the heaviest weight of the current round$+\Delta$; if there's not
+lie it as Ken's heaviest weight$-\Delta$.
+
+A basic algorithm determining the final score in Deceitful War:
+\begin{enumerate}
+\item Sort both of the weight sequences and set unmarked all of the weights
+\item $i\leftarrow1$; $score\leftarrow0$
+\item Select Naomi's $i$th weight
+\item $j\leftarrow1$
+\item Is Ken's $j$th weight is not marked and lighter than Naomi's $i$th
+weight?
+
+\begin{enumerate}
+\item Yes: mark Ken's $j$th weight and $score\leftarrow score+1$ and if
+$i\leq n$ go back to 3.
+\item No: $j\leftarrow j+1$ and if $j\leq n$ go back to 5.
+\end{enumerate}
+\end{enumerate}
+
+\subsection{Generally about War and Deceitful War (without proof)}
+
+Let's denote $U$ Naomi's weight set and $V$ Ken's weight set. Create
+$G$ bipartite graph with these $U,V$ sets as vertex sets and connect
+with edge $n\in U$ and $k\in V$ according to a game specific rules.
+The score will be the maximum bipartite matching of $G$.
+
+
+\subsubsection{War}
+
+The rule: connect with edge $n\in U$ and $k\in V$ if $n<k$.
+
+
+\subsubsection{Deceitful War}
+
+The rule: connect with edge $n\in U$ and $k\in V$ if $n>k$.
+\end{document}
